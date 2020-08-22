@@ -1,46 +1,76 @@
-(function() {
-    function Question(question, answers, correct) {
-        this.question = question;
-        this.answers = answers;
-        this.correct = correct;
-    }
+(function(){
 
-    Question.prototype.displayQuestion = function() {
-        console.log(this.question);
+function Question(question, answers, correct){
+	this.question = question;
+	this.answers = answers;
+	this.correct = correct;
+}
+// using prototype property
+Question.prototype.displayQuestion =
+function() {
+	console.log(this.question);
 
-        for (var i = 0; i < this.answers.length; i++) {
-            console.log(i + ': ' + this.answers[i]);
-        }
-    }
+	for(var i=0; i < this.answers.length; i++)  {
+		console.log(i + ' : ' + this.answers[i]);
+	}
+}
 
-    Question.prototype.checkAnswer = function(ans) {
-        if (ans === this.correct) {
-            console.log('Correct answer!');
+Question.prototype.checkAnswer =
 
-        } else {
-            console.log('Wrong answer. Try again :)')
-        }
-    }
+function(ans, callback) {
+	var sc;
+	if(ans === this.correct) {
+		console.log('Correct Answer !');
+		sc = callback(true);
+	} else {
+		console.log('Wrong Answer, Try again');
+		sc = callback(false);
+	}
+	this.displayScore(sc);
+}
 
-    var q1 = new Question('Is JavaScript the coolest programming language in the world?',
-                          ['Yes', 'No'],
-                          0);
+Question.prototype.displayScore = 
+function(score) {
+	console.log('Your current score is ' + score);
+	console.log('-----------------------------------------------------------------------------------------------------------------');
 
-    var q2 = new Question('What is the name of this course\'s teacher?',
-                          ['John', 'Micheal', 'Jonas'],
-                          2);
+}
 
-    var q3 = new Question('What does best describe coding?',
-                          ['Boring', 'Hard', 'Fun', 'Tediuos'],
-                          2);
+var q1 = new Question('Is Javascript the coolest programming language in the world ?', ['Yes','No'], 0);
 
-    var questions = [q1, q2, q3];
+var q2 = new Question('What is the name of this course teacher ?', ['John','Michael','Jonas'], 2);
 
-    var n = Math.floor(Math.random() * questions.length);
+var q3 = new Question('What does best describe coding ?', ['Boring','Hard','Fun','Tidious'], 2);
 
-    questions[n].displayQuestion();
+var questions = [q1, q2, q3];
 
-    var answer = parseInt(prompt('Please select the correct answer.'));
+function score() {
+	var sc = 0;
+	return function(correct) {
+			if (correct) {
+				sc++;
+			}
+			return sc;
+	}
+}
+var keepScore = score();
 
-    questions[n].checkAnswer(answer);
+function nextQuestion()  {
+	var n = Math.floor(Math.random() * questions.length);
+
+	questions[n].displayQuestion();
+	// to input answer in the prompt and answer shoulld be a integer. 
+	var answer = prompt('Please select the correct answer');
+
+	
+	if(answer !== 'exit'){
+
+		questions[n].checkAnswer(parseInt(answer), keepScore);	
+		nextQuestion();
+	}
+	
+}
+
+nextQuestion();
+
 })();
